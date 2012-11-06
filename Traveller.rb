@@ -12,11 +12,11 @@ get '/' do
 
 	worlds = JSON.parse(worlds)["Worlds"]
 	
-	haml :main, :locals => { :img_url => jump_map(current_location, 2), :img_2_url => jump_map(current_location, 5), :world_data => worlds }	
+	haml :main, :locals => { :img_url => jump_map(current_location, 2), :world_data => worlds }	
 end
 
 get '/widemap/?' do 
-	jump_map(current_location, 8)
+	haml :wide_view, :locals => { :iframe_url => iframe(current_location, 100) }
 end
 
 def jump_map(location, n)
@@ -62,3 +62,25 @@ def jump_worlds(location, n)
 	response.body
 end
 
+Scale_Factor = Math.sqrt(3) / 2
+
+def iframe(location, scale)
+	sx, sy, hx, hy = location
+	
+	world_x = ( sx * 32 ) + hx - 1
+	world_y = ( sy * 40 ) + hy - 40
+
+	x = world_x * Scale_Factor
+	y = -world_y
+
+	url = 'http://www.travellermap.com/iframe.htm?'
+	xPart = "x=#{x}&"
+	yPart = "y=#{y}&"
+	sxPart = "yah_sx=#{sx}&"
+	syPart = "yah_sy=#{sy}&"
+	hxPart = "yah_hx=#{hx}&"
+	hyPart = "yah_hy=#{hy}&"
+	scalePart = "scale=#{scale}"
+
+	url = url + xPart + yPart + sxPart + syPart + hxPart + hyPart + scalePart
+end
